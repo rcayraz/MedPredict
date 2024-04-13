@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Plantilla CloudFormation para crear una VPC con subredes pública y privada, un Grupo de Seguridad con reglas permisivas, e Internet Gateway para acceso a Internet.'
+
+Resources:
+  MedPredictVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: '10.0.0.0/16'
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: MedPredict
+
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: InternetGatewayMedPredict
+
+  AttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref MedPredictVPC
+      InternetGatewayId: !Ref InternetGateway
+    DependsOn: InternetGateway
+
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MedPredictVPC
+      Tags:
+        - Key: Name
+          Value: PublicRouteTableMedPredict
+
+  PublicRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+    DependsOn: AttachGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubredPublica
+      RouteTableId: !Ref PublicRouteTable
+    DependsOn: PublicRouteTable
+
+  SubredPublica:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MedPredictVPC
+      CidrBlock: '10.0.1.0/24'
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: SubredPublicaMedPredict
+
+  SubredPrivada:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MedPredictVPC
+      CidrBlock: '10.0.2.0/24'
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: SubredPrivadaMedPredict
+
+  GrupoSeguridad:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: 'Acceso total para entrada y salida desde y hacia cualquier direccion'
+      VpcId: !Ref MedPredictVPC
+      SecurityGroupIngress:
+        - IpProtocol: 'icmp'
+          FromPort: -1
+          ToPort: -1
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: 'tcp'
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: '0.0.0.0/0'
+      SecurityGroupEgress:
+        - IpProtocol: '-1'
+          FromPort: -1
+          ToPort: -1
+          CidrIp: '0.0.0.0/0'
+      Tags:
+        - Key: Name
+          Value: GrupoSeguridadMedPredict
+
+Outputs:
+  VPCId:
+    Description: "ID of the new VPC"
+    Value: !Ref MedPredictVPC
+  PublicSubnetId:
+    Description: "ID of the public subnet"
+    Value: !Ref SubredPublica
+  PrivateSubnetId:
+    Description: "ID of the private subnet"
+    Value: !Ref SubredPrivada
+  SecurityGroupId:
+    Description: "ID of the security group"
+    Value: !Ref GrupoSeguridad
+  InternetGatewayId:
+    Description: "ID of the Internet Gateway"
+    Value: !Ref InternetGateway
