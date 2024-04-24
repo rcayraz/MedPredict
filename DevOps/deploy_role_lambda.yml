@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'IAM Role para AWS Lambda que permite ser invocado por API Gateway y leer desde un bucket S3 específico.'
+
+Resources:
+  LambdaApiGatewayS3ReadRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "LambdaExecutionPolicy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: "Allow"
+                Action: "logs:*"
+                Resource: "arn:aws:logs:*:*:*"
+              - Effect: "Allow"
+                Action: "s3:GetObject"
+                Resource: "arn:aws:s3:::medpredict/*"
+        
+Outputs:
+  RoleArn:
+    Description: "ARN del rol de IAM para Lambda"
+    Value: !GetAtt LambdaApiGatewayS3ReadRole.Arn
