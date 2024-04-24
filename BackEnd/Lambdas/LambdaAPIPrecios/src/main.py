@@ -5,8 +5,8 @@ from s3fs import S3FileSystem
 
 def lambda_handler(event, context):
     s3 = S3FileSystem(anon=False)
-    bucket_name = "nombre-de-tu-bucket"
-    file_key = "ruta/a/tu/archivo.parquet"
+    bucket_name = "medpredict"
+    file_key = "data_files/precios_vs.parquet"
     file_path = f's3://{bucket_name}/{file_key}'
     df = pd.read_parquet(file_path, filesystem=s3)
     try:
