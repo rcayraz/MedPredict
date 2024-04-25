@@ -1,0 +1,5 @@
+###### Requirements with Version Specifiers ######
+boto3
+pandas
+pyarrow
+s3fs 
