@@ -1,3 +1,6 @@
 venv/
 Data/Source/
 Data/raw_cl/
+BackEnd/Lambdas/LambdaAPIPrecios/src/__pycache__/*
+BackEnd/Lambdas/env_lambda/*
+BackEnd/Lambdas/LambdaAPIPrecios/src/test.py
