@@ -26,9 +26,16 @@ def lambda_handler(event, context):
         # Ejemplo: filtrar o procesar datos
         filtered_df = df.loc[df['Descripcion'] == descripcion]
         result = filtered_df.to_json(orient='records')
+        headers = {
+        "Access-Control-Allow-Origin": "*",  # Permite solicitudes de cualquier origen
+        "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, DELETE",  # Métodos permitidos
+        "Access-Control-Allow-Headers": "Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token",  # Headers permitidos
+        "Access-Control-Allow-Credentials": "true"  # Permite credenciales en las solicitudes
+    }
 
         return {"statusCode": 200, 
                 
+                'headers': headers,
                 "body": result}
     except KeyError as e:
         return {"statusCode": 500, "body": json.dumps(f"Error de clave: {str(e)}")}

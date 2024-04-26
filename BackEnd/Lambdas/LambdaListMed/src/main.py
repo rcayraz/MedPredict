@@ -14,11 +14,15 @@ def lambda_handler(event, context):
         
         filtered_df=df['Descripcion'].unique().tolist()
         result = json.dumps(filtered_df)
+        headers = {
+        "Access-Control-Allow-Origin": "*",  # Permite solicitudes de cualquier origen
+        "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, DELETE",  # Métodos permitidos
+        "Access-Control-Allow-Headers": "Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token",  # Headers permitidos
+        "Access-Control-Allow-Credentials": "true"  # Permite credenciales en las solicitudes
+    }
         return {"statusCode": 200, 
                 
-        'headers': {
-            'Content-Type': 'application/json'
-        },
+        'headers': headers,
                 "body": result}
     except KeyError as e:
         return { "estatusCode":500,
