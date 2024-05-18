@@ -5,3 +5,4 @@ BackEnd/Lambdas/LambdaAPIPrecios/src/__pycache__/*
 BackEnd/Lambdas/env_lambda/*
 BackEnd/Lambdas/LambdaAPIPrecios/src/test.py
 BackEnd/Lambdas/LambdaListMed/src/__pycache__/*
+.venv/*
